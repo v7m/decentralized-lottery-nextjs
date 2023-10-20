@@ -5,12 +5,16 @@ import { useNotification } from "web3uikit";
 import { ethers } from "ethers";
 
 export default function LotteryEntrance() {
-    const { isWeb3Enabled, chainId: chainIdHex } = useMoralis();
+    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
     const chainId = parseInt(chainIdHex);
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
-    const [entrancePrice, setEntrancePrice] = useState("0");
+    const [minEntrancePrice, setEntrancePrice] = useState("0");
     const [playersCount, setPlayersCount] = useState("0");
     const [recentWinner, setRecentWinner] = useState("0");
+    const [lotteryPrize, setLotteryPrize] = useState("0");
+    const [playerAmount, setPlayerAmount] = useState("0");
+    const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
+
     const dispatch = useNotification();
 
     const {
@@ -22,14 +26,14 @@ export default function LotteryEntrance() {
         abi: contractAbi,
         contractAddress: lotteryAddress,
         functionName: "enterLottery",
-        msgValue: entrancePrice,
+        msgValue: minEntrancePrice,
         params: {},
     });
 
-    const { runContractFunction: getEntrancePrice } = useWeb3Contract({
+    const { runContractFunction: getMinEntrancePrice } = useWeb3Contract({
         abi: contractAbi,
         contractAddress: lotteryAddress,
-        functionName: "getEntrancePrice",
+        functionName: "getMinEntrancePrice",
         params: {},
     });
 
@@ -47,13 +51,44 @@ export default function LotteryEntrance() {
         params: {},
     });
 
+    const { runContractFunction: getLotteryPrize } = useWeb3Contract({
+        abi: contractAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getLotteryPrize",
+        params: {},
+    });
+
+    const { runContractFunction: getGetPlayerAmount } = useWeb3Contract({
+        abi: contractAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getGetPlayerAmount",
+        params: {
+            playerAddress: account
+        },
+    });
+
+    const { runContractFunction: getPlayersAmountAvg } = useWeb3Contract({
+        abi: contractAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getPlayersAmountAvg",
+        params: {},
+    });
+
     async function updateUIValues() {
-        const entranceFeeFromCall = (await getEntrancePrice()).toString();
+        const entranceFeeFromCall = (await getMinEntrancePrice()).toString();
         const numPlayersFromCall = (await getPlayersCount()).toString();
         const recentWinnerFromCall = await getRecentWinner();
+        const lotteryPrizeFromCall = (await getLotteryPrize()).toString();
+        const playerAmountFromCall = (await getGetPlayerAmount()).toString();
+        const playersAmountAvgFromCall = (await getPlayersAmountAvg()).toString();
+
+
         setEntrancePrice(entranceFeeFromCall);
         setPlayersCount(numPlayersFromCall);
         setRecentWinner(recentWinnerFromCall);
+        setLotteryPrize(lotteryPrizeFromCall);
+        setPlayerAmount(playerAmountFromCall);
+        setPlayersAmountAvg(playersAmountAvgFromCall);
     }
 
     useEffect(() => {
@@ -61,15 +96,6 @@ export default function LotteryEntrance() {
             updateUIValues();
         }
     }, [isWeb3Enabled]);
-
-    // An example filter for listening for events, we will learn more on this next Front end lesson
-    // const filter = {
-    //     address: lotteryAddress,
-    //     topics: [
-    //         // the name of the event, parnetheses containing the data type of each event, no spaces
-    //         utils.id("RaffleEnter(address)"),
-    //     ],
-    // }
 
     const handleNewNotification = () => {
         dispatch({
@@ -111,9 +137,12 @@ export default function LotteryEntrance() {
                             "Enter Lottery"
                         )}
                     </button>
-                    <div>Entrance Fee: {ethers.utils.formatUnits(entrancePrice, "ether")} ETH</div>
-                    <div>The current number of players is: {playersCount}</div>
-                    <div>The most previous winner was: {recentWinner}</div>
+                    <div>Min Entrance Price: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
+                    <div>Current Lottery user amount: { ethers.utils.formatEther(playerAmount) } ETH</div>
+                    <div>Current Lottery Prize: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
+                    <div>Current Lottery AVG user amount: { ethers.utils.formatEther(playersAmountAvg) } ETH</div>
+                    <div>Current Lottery number of players: { playersCount }</div>
+                    <div>The most previous winner was: { recentWinner }</div>
                 </>
             ) : (
                 <div>Please connect to a supported chain </div>
