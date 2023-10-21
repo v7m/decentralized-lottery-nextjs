@@ -14,6 +14,7 @@ export default function LotteryEntrance() {
     const [lotteryPrize, setLotteryPrize] = useState("0");
     const [playerAmount, setPlayerAmount] = useState("0");
     const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
+    const [lotteryState, setLotteryState] = useState("");
 
     const dispatch = useNotification();
 
@@ -74,34 +75,107 @@ export default function LotteryEntrance() {
         params: {},
     });
 
+    const { runContractFunction: getLotteryState } = useWeb3Contract({
+        abi: contractAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getLotteryState",
+        params: {},
+    });
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const lotteryContract = new ethers.Contract(lotteryAddress, contractAbi, provider);
+
     async function updateUIValues() {
         const entranceFeeFromCall = (await getMinEntrancePrice()).toString();
         const numPlayersFromCall = (await getPlayersCount()).toString();
         const recentWinnerFromCall = await getRecentWinner();
         const lotteryPrizeFromCall = (await getLotteryPrize()).toString();
         const playerAmountFromCall = (await getGetPlayerAmount()).toString();
-        const playersAmountAvgFromCall = (await getPlayersAmountAvg()).toString();
-
+        const lotteryStateFromCall = (await getLotteryState()).toString();
+        // const playersAmountAvgFromCall = (await getPlayersAmountAvg()).toString();
 
         setEntrancePrice(entranceFeeFromCall);
         setPlayersCount(numPlayersFromCall);
         setRecentWinner(recentWinnerFromCall);
         setLotteryPrize(lotteryPrizeFromCall);
         setPlayerAmount(playerAmountFromCall);
-        setPlayersAmountAvg(playersAmountAvgFromCall);
+        setLotteryState(lotteryStateFromCall);
+        // setPlayersAmountAvg(playersAmountAvgFromCall);
     }
 
     useEffect(() => {
-        if (isWeb3Enabled) {
-            updateUIValues();
-        }
+        if (isWeb3Enabled) { updateUIValues(); }
     }, [isWeb3Enabled]);
 
-    const handleNewNotification = () => {
+    useEffect(() => {
+        const winnerRequestedEventFilter = {
+            address: lotteryAddress,
+            topics: [
+                ethers.utils.id("LotteryWinnerRequested(uint256)")
+            ]
+        }
+
+        const enterLotteryEventFilter = {
+            address: lotteryAddress,
+            topics: [
+                ethers.utils.id("PlayerEnterLottery(address)")
+            ]
+        }
+
+        const winnerPickedEventFilter = {
+            address: lotteryAddress,
+            topics: [
+                ethers.utils.id("LotteryWinnerPicked(address)")
+            ]
+        }
+
+        lotteryContract.on(winnerRequestedEventFilter, (requestId, event) => {
+            console.log('LotteryWinnerRequested');
+            updateUIValues();
+            handleWinnerRequestedNotification();
+        });
+
+        lotteryContract.on(enterLotteryEventFilter, (player, event) => {
+            console.log('PlayerEnterLottery');
+            updateUIValues();
+        });
+
+        lotteryContract.on(winnerPickedEventFilter, (player, event) => {
+            console.log('LotteryWinnerPicked');
+            updateUIValues();
+            handleWinnerPickedNotification(player);
+        });
+
+        return () => {
+            lotteryContract.removeAllListeners();
+        }
+    }, []);
+
+    const handleTransactionCompletedNotification = () => {
         dispatch({
             type: "info",
             message: "You have successfully entered lottery!",
-            title: "Transaction Complete",
+            title: "Entrance confirmed",
+            position: "topR",
+            icon: "bell",
+        });
+    }
+
+    const handleWinnerPickedNotification = (winner) => {
+        dispatch({
+            type: "success",
+            message: `Winner address: ${winner}`,
+            title: "The winner has been found!",
+            position: "topR",
+            icon: "bell",
+        });
+    }
+
+    const handleWinnerRequestedNotification = () => {
+        dispatch({
+            type: "warning",
+            message: "The current lottery round has ended, a winner is being sought.",
+            title: "Lottery round ended ...",
             position: "topR",
             icon: "bell",
         });
@@ -111,7 +185,7 @@ export default function LotteryEntrance() {
         try {
             await txResponse.wait(1);
             updateUIValues();
-            handleNewNotification(txResponse);
+            handleTransactionCompletedNotification(txResponse);
         } catch (error) {
             console.log(error);
         }
@@ -137,12 +211,13 @@ export default function LotteryEntrance() {
                             "Enter Lottery"
                         )}
                     </button>
+                    <div>Lottery State: { lotteryState == "0" ? "OPEN" : "WINNER CALCULATING" }</div>
                     <div>Min Entrance Price: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
                     <div>Current Lottery user amount: { ethers.utils.formatEther(playerAmount) } ETH</div>
                     <div>Current Lottery Prize: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
                     <div>Current Lottery AVG user amount: { ethers.utils.formatEther(playersAmountAvg) } ETH</div>
                     <div>Current Lottery number of players: { playersCount }</div>
-                    <div>The most previous winner was: { recentWinner }</div>
+                    <div>The most previous winner was: { recentWinner } { recentWinner.toLowerCase() == account ? "(you)" : "" }</div>
                 </>
             ) : (
                 <div>Please connect to a supported chain </div>
