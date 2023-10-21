@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-export default function LotteryTable(props) {
+export default function LotteryDataTable(props) {
     const winningProbability = () => {
         return props.playerAmount > 0 ? `${(props.lotteryPrize / props.playerAmount) * 100}%` : "N/A"
     }
@@ -8,8 +8,16 @@ export default function LotteryTable(props) {
     return (
         <div className="relative overflow-x-auto">
             <div className="border rounded-lg overflow-hidden">
-                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table className="w-full text-md text-left text-gray-500 dark:text-gray-400">
                     <tbody>
+                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                Duration
+                            </th>
+                            <td className="px-6 py-4">
+                                { props.duration } sec
+                            </td>
+                        </tr>
                         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 Jackpot
@@ -44,7 +52,7 @@ export default function LotteryTable(props) {
                         </tr>
                         <tr className="bg-white dark:bg-gray-800">
                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Your probability of winning
+                                Your winning probability
                             </th>
                             <td className="px-6 py-4">
                                 { winningProbability() }

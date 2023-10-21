@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNotification } from "web3uikit";
 import { ethers } from "ethers";
 
-import LotteryTable from "./LotteryTable";
+import LotteryDataTable from "./LotteryDataTable";
 import PreviousWinner from "./PreviousWinner";
 import LotteryState from "./LotteryState";
 import EntranceInput from "./EntranceInput";
@@ -22,15 +22,12 @@ export default function LotteryEntrance() {
     const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
     const [lotteryState, setLotteryState] = useState("");
     const [entranceAmount, setEntranceAmount] = useState("0");
+    const [duration, setDuration] = useState("");
+
 
     const dispatch = useNotification();
 
-    const {
-        runContractFunction: enterLottery,
-        data: enterTxResponse,
-        isLoading,
-        isFetching,
-    } = useWeb3Contract({
+    const { runContractFunction: enterLottery, isLoading, isFetching } = useWeb3Contract({
         abi: contractAbi,
         contractAddress: lotteryAddress,
         functionName: "enterLottery",
@@ -82,6 +79,13 @@ export default function LotteryEntrance() {
         params: {},
     });
 
+    const { runContractFunction: getDuration } = useWeb3Contract({
+        abi: contractAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getDuration",
+        params: {},
+    });
+
     const { runContractFunction: getLotteryState } = useWeb3Contract({
         abi: contractAbi,
         contractAddress: lotteryAddress,
@@ -100,6 +104,7 @@ export default function LotteryEntrance() {
         const playerAmountFromCall = (await getGetPlayerAmount()).toString();
         const lotteryStateFromCall = (await getLotteryState()).toString();
         const playersAmountAvgFromCall = (await getPlayersAmountAvg()).toString();
+        const durationFromCall = (await getDuration()).toString();
 
         setEntranceAmount(minEntrancePriceFromCall);
         setMinEntrancePrice(minEntrancePriceFromCall);
@@ -109,6 +114,7 @@ export default function LotteryEntrance() {
         setPlayerAmount(playerAmountFromCall);
         setLotteryState(lotteryStateFromCall);
         setPlayersAmountAvg(playersAmountAvgFromCall);
+        setDuration(durationFromCall); 
     }
 
     useEffect(() => {
@@ -191,7 +197,7 @@ export default function LotteryEntrance() {
 
     const handleTransactionSentNotification = () => {
         dispatch({
-            type: "success",
+            type: "info",
             message: "Entrance transaction sent, waiting for confirmation.",
             title: "Transaction sent",
             position: "topR",
@@ -239,11 +245,12 @@ export default function LotteryEntrance() {
                             />
                         </div>
                         <div className="col-start-2 col-span-3">
-                            <LotteryTable
+                            <LotteryDataTable
                                 lotteryPrize={ lotteryPrize }
                                 playersCount={ playersCount }
                                 playersAmountAvg={ playersAmountAvg }
                                 playerAmount={ playerAmount }
+                                duration={ duration }
                             />
                         </div>
                     </div>
