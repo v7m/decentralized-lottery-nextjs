@@ -8,13 +8,14 @@ export default function LotteryEntrance() {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
     const chainId = parseInt(chainIdHex);
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
-    const [minEntrancePrice, setEntrancePrice] = useState("0");
+    const [minEntrancePrice, setMinEntrancePrice] = useState("0");
     const [playersCount, setPlayersCount] = useState("0");
     const [recentWinner, setRecentWinner] = useState("0");
     const [lotteryPrize, setLotteryPrize] = useState("0");
     const [playerAmount, setPlayerAmount] = useState("0");
     const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
     const [lotteryState, setLotteryState] = useState("");
+    const [entranceAmount, setEntranceAmount] = useState("0");
 
     const dispatch = useNotification();
 
@@ -27,7 +28,7 @@ export default function LotteryEntrance() {
         abi: contractAbi,
         contractAddress: lotteryAddress,
         functionName: "enterLottery",
-        msgValue: minEntrancePrice,
+        msgValue: entranceAmount,
         params: {},
     });
 
@@ -86,7 +87,7 @@ export default function LotteryEntrance() {
     const lotteryContract = new ethers.Contract(lotteryAddress, contractAbi, provider);
 
     async function updateUIValues() {
-        const entranceFeeFromCall = (await getMinEntrancePrice()).toString();
+        const minEntrancePriceFromCall = (await getMinEntrancePrice()).toString();
         const numPlayersFromCall = (await getPlayersCount()).toString();
         const recentWinnerFromCall = await getRecentWinner();
         const lotteryPrizeFromCall = (await getLotteryPrize()).toString();
@@ -94,7 +95,8 @@ export default function LotteryEntrance() {
         const lotteryStateFromCall = (await getLotteryState()).toString();
         // const playersAmountAvgFromCall = (await getPlayersAmountAvg()).toString();
 
-        setEntrancePrice(entranceFeeFromCall);
+        setEntranceAmount(minEntrancePriceFromCall);
+        setMinEntrancePrice(minEntrancePriceFromCall);
         setPlayersCount(numPlayersFromCall);
         setRecentWinner(recentWinnerFromCall);
         setLotteryPrize(lotteryPrizeFromCall);
@@ -191,28 +193,60 @@ export default function LotteryEntrance() {
         }
     }
 
+    const handleSubmit = async () => {
+        await enterLottery({
+            onSuccess: handleSuccess,
+            onError: (error) => console.log(error),
+        })
+    }
+
+    const handleChangeAmount = (event) => {
+        console.log(ethers.utils.parseEther(event.target.value));
+        setEntranceAmount(ethers.utils.parseEther(event.target.value).toString());
+    }
+
     return (
         <div className="p-5">
             {lotteryAddress ? (
                 <>
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
-                        onClick={async () =>
-                            await enterLottery({
-                                onSuccess: handleSuccess,
-                                onError: (error) => console.log(error),
-                            })
-                        }
-                        disabled={isLoading || isFetching}
-                    >
-                        {isLoading || isFetching ? (
-                            <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
-                        ) : (
-                            "Enter Lottery"
-                        )}
-                    </button>
+                    <div className="h-56 grid grid-cols-5 gap-4 content-center">
+                        <div className="col-start-3 col-span-1">
+                            <div class="relative mt-2 rounded-md shadow-sm mb-3">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg class="w-4 h-4 mr-2 -ml-1 text-[#626890]" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="ethereum" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z"></path></svg>
+                                </div>
+                                <input
+                                    type="number"
+                                    id="entrance-price"
+                                    className="block text-center w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:text-md md:leading-6"
+                                    aria-describedby="price-currency"
+                                    value={ ethers.utils.formatEther(entranceAmount) }
+                                    onChange={ handleChangeAmount }
+                                    min={ ethers.utils.formatEther(minEntrancePrice) }
+                                    step={ ethers.utils.formatEther(minEntrancePrice) }
+                                />
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <span class="text-gray-500 sm:text-sm" id="price-currency">ETH</span>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="w-full text-lg text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                                onClick={ handleSubmit }
+                                disabled={ isLoading || isFetching }
+                            >
+                                { isLoading || isFetching ? (
+                                    <div className="mx-auto animate-spin spinner-border h-7 w-7 border-b-2 rounded-full"></div>
+                                ) : (
+                                    "Enter Lottery"
+                                ) }
+                            </button>
+                        </div>
+                    </div>
+
                     <div>Lottery State: { lotteryState == "0" ? "OPEN" : "WINNER CALCULATING" }</div>
-                    <div>Min Entrance Price: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
+                    <div>Min Entrance Price: { ethers.utils.formatEther(minEntrancePrice) } ETH</div>
                     <div>Current Lottery user amount: { ethers.utils.formatEther(playerAmount) } ETH</div>
                     <div>Current Lottery Prize: { ethers.utils.formatEther(lotteryPrize) } ETH</div>
                     <div>Current Lottery AVG user amount: { ethers.utils.formatEther(playersAmountAvg) } ETH</div>

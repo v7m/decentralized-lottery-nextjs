@@ -20,7 +20,7 @@ export default function Home() {
       {isWeb3Enabled ? (
         <div>
           {supportedChains.includes(parseInt(chainId).toString()) ? (
-            <div className="flex flex-row">
+            <div>
               <LotteryEntrance className="p-8" />
             </div>
           ) : (
