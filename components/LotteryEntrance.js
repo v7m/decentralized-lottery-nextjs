@@ -173,7 +173,7 @@ export default function LotteryEntrance() {
         dispatch({
             type: "success",
             message: `Winner address: ${winner}`,
-            title: "The winner has been selected!",
+            title: "Winner determined!",
             position: "topR",
             icon: "bell",
         });
@@ -182,14 +182,24 @@ export default function LotteryEntrance() {
     const handleWinnerRequestedNotification = () => {
         dispatch({
             type: "warning",
-            message: "The current lottery round has ended, a winner is being sought.",
+            message: "The current lottery round has ended, the winner is being determined.",
             title: "Lottery round ended",
             position: "topR",
             icon: "bell",
         });
     }
 
-    const handleSuccess = async (txResponse) => {
+    const handleTransactionSentNotification = () => {
+        dispatch({
+            type: "success",
+            message: "Entrance transaction sent, waiting for confirmation.",
+            title: "Transaction sent",
+            position: "topR",
+            icon: "bell",
+        });
+    }
+
+    const handleSuccessEntrance = async (txResponse) => {
         try {
             await txResponse.wait(1);
             updateUIValues();
@@ -201,7 +211,8 @@ export default function LotteryEntrance() {
 
     const handleSubmit = async () => {
         await enterLottery({
-            onSuccess: handleSuccess,
+            onComplete: handleTransactionSentNotification,
+            onSuccess: handleSuccessEntrance,
             onError: (error) => console.log(error),
         })
     }
