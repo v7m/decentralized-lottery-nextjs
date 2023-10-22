@@ -16,14 +16,13 @@ export default function LotteryEntrance() {
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
     const [minEntrancePrice, setMinEntrancePrice] = useState("0");
     const [playersCount, setPlayersCount] = useState("0");
-    const [recentWinner, setRecentWinner] = useState("0");
+    const [recentWinner, setRecentWinner] = useState("");
     const [lotteryPrize, setLotteryPrize] = useState("0");
     const [playerAmount, setPlayerAmount] = useState("0");
     const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
     const [lotteryState, setLotteryState] = useState("");
     const [entranceAmount, setEntranceAmount] = useState("0");
     const [duration, setDuration] = useState("");
-
 
     const dispatch = useNotification();
 
@@ -114,7 +113,7 @@ export default function LotteryEntrance() {
         setPlayerAmount(playerAmountFromCall);
         setLotteryState(lotteryStateFromCall);
         setPlayersAmountAvg(playersAmountAvgFromCall);
-        setDuration(durationFromCall); 
+        setDuration(durationFromCall);
     }
 
     useEffect(() => {
@@ -124,40 +123,61 @@ export default function LotteryEntrance() {
     useEffect(() => {
         const winnerRequestedEventFilter = {
             address: lotteryAddress,
-            topics: [
-                ethers.utils.id("LotteryWinnerRequested(uint256)")
-            ]
+            topics: [ethers.utils.id("LotteryWinnerRequested(uint256)")]
         }
 
         const enterLotteryEventFilter = {
             address: lotteryAddress,
-            topics: [
-                ethers.utils.id("PlayerEnterLottery(address)")
-            ]
+            topics: [ethers.utils.id("PlayerEnterLottery(address)")]
         }
 
         const winnerPickedEventFilter = {
             address: lotteryAddress,
-            topics: [
-                ethers.utils.id("LotteryWinnerPicked(address)")
-            ]
+            topics: [ethers.utils.id("LotteryWinnerPicked(address)")]
+        }
+
+        const lotteryOpenedFilter = {
+            address: lotteryAddress,
+            topics: [ethers.utils.id("LotteryOpened()")]
+        }
+
+        const lotteryClosedFilter = {
+            address: lotteryAddress,
+            topics: [ethers.utils.id("LotteryClosed()")]
+        }
+
+        const lotteryStartedFilter = {
+            address: lotteryAddress,
+            topics: [ethers.utils.id("LotteryStarted()")]
         }
 
         lotteryContract.on(winnerRequestedEventFilter, (requestId, event) => {
-            console.log('LotteryWinnerRequested');
             updateUIValues();
-            handleWinnerRequestedNotification();
         });
 
         lotteryContract.on(enterLotteryEventFilter, (player, event) => {
-            console.log('PlayerEnterLottery');
             updateUIValues();
         });
 
         lotteryContract.on(winnerPickedEventFilter, (player, event) => {
-            console.log('LotteryWinnerPicked');
             updateUIValues();
             handleWinnerPickedNotification(player);
+        });
+
+        lotteryContract.on(lotteryOpenedFilter, (event) => {
+            updateUIValues();
+        });
+
+        lotteryContract.on(lotteryClosedFilter, (event) => {
+            console.log('Lottery Closed');
+            updateUIValues();
+            handleLotteryClosedNotification();
+        });
+
+        lotteryContract.on(lotteryStartedFilter, (event) => {
+            console.log('Lottery Started');
+            updateUIValues();
+            handleLotteryStartedNotification();
         });
 
         return () => {
@@ -167,7 +187,7 @@ export default function LotteryEntrance() {
 
     const handleTransactionCompletedNotification = () => {
         dispatch({
-            type: "info",
+            type: "success",
             message: "You have successfully entered lottery!",
             title: "Lottery entered",
             position: "topR",
@@ -180,17 +200,7 @@ export default function LotteryEntrance() {
             type: "success",
             message: `Winner address: ${winner}`,
             title: "Winner determined!",
-            position: "topR",
-            icon: "bell",
-        });
-    }
-
-    const handleWinnerRequestedNotification = () => {
-        dispatch({
-            type: "warning",
-            message: "The current lottery round has ended, the winner is being determined.",
-            title: "Lottery round ended",
-            position: "topR",
+            position: "topL",
             icon: "bell",
         });
     }
@@ -201,6 +211,26 @@ export default function LotteryEntrance() {
             message: "Entrance transaction sent, waiting for confirmation.",
             title: "Transaction sent",
             position: "topR",
+            icon: "bell",
+        });
+    }
+
+    const handleLotteryClosedNotification = () => {
+        dispatch({
+            type: "info",
+            message: "The winner will be announced soon.",
+            title: "Lottery round was over",
+            position: "topL",
+            icon: "bell",
+        });
+    }
+
+    const handleLotteryStartedNotification = () => {
+        dispatch({
+            type: "info",
+            message: "The round will continue for the specified time",
+            title: "Lottery round started",
+            position: "topL",
             icon: "bell",
         });
     }
@@ -225,7 +255,7 @@ export default function LotteryEntrance() {
 
     return (
         <div className="p-5">
-            {lotteryAddress ? (
+            { lotteryAddress ? (
                 <>
                     <div className="h-70 grid grid-cols-7 gap-4 content-center">
                         <div className="col-start-3 col-span-3">
