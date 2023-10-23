@@ -27,9 +27,9 @@ export default function Home() {
                         <div>
                             <div className="h-70 grid grid-cols-7 gap-4 content-center">
                                 <div className="col-start-3 col-span-3">
-                                    <div className="p-1 text-center px-2 text-3xl">
+                                    <p className="p-1 text-center px-2 text-3xl">
                                         Please switch to a supported chain (Sepolia).
-                                    </div>
+                                    </p>
                                 </div>
                             </div>
                         </div>
