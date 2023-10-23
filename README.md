@@ -2,14 +2,13 @@
 
 This is a frontend part of Decentralized Ethereum Lottery project. You can find the other part in the [Hardhat Repo](https://github.com/v7m/decentralized-lottery-hardhat).
 
-
 Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
 
-[Deployed App](https://fancy-dream-3458.on.fleek.co/)
+Deployed App: https://decentralized-eth-lottery.on.fleek.co/
 
-[Deployed App IPFS](ipfs://Qme4KacFx21y6pYuTC6veAU2usryXB3fNWqLkX3a2hMvDe)
+Deployed App IPFS: `ipfs://Qme4KacFx21y6pYuTC6veAU2usryXB3fNWqLkX3a2hMvDe`
 
-<img src="img/readme-app.png" alt="image" width="500" height="auto">
+<img src="img/readme-app.png" alt="image" width="700" height="auto">
 
 ## Built with:
 - Solidity
