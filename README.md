@@ -6,7 +6,7 @@ Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3
 
 Deployed App: https://decentralized-eth-lottery.on.fleek.co/
 
-Deployed App IPFS: `ipfs://QmWdqKfsAvJQ8hWoUw9MuSj23V7YhtLRaaRbHjaZwVss3t`
+Deployed App IPFS: `ipfs://QmczXNikyVX4zVzPmWo6zyf5rj4a5bBPQp3qtvNj2Vo58n`
 
 <img src="img/readme-app.png" alt="image" width="700" height="auto">
 
