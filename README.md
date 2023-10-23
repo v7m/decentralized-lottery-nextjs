@@ -65,7 +65,7 @@ yarn dev
 
 Open [localhost](http://localhost:3000) and try the lottery.
 
-# Deploying to IPFS
+# Deploy to IPFS
 
 1. Build your static code.
 
@@ -81,7 +81,20 @@ yarn next export
 
 > Please be aware that Next.js and Moralis have certain non-static features. If you choose to deviate from this repository, you may encounter errors.
 
-3. Deploy to IPFS using Fleek
+3. Deploy to IPFS
+
+- [Download IPFS desktop](https://ipfs.io/#install)
+- Open your [IPFS desktop app](https://ipfs.io/)
+- Select `import` and choose the folder the above step just created (should be `out`)
+
+4. Copy the CID of the folder you pinned
+
+5. Get [IPFS companion](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch?hl=en) for your browser (or use [Brave Browser](https://brave.com/)).
+
+6. Open `ipfs://YOUR_CID_HERE` to see IPFS app deployed
+
+
+# Deploy to IPFS using Fleek
 
 [Fleek](https://fleek.co/) offers automatic deployment when connected to your GitHub repository.
 
