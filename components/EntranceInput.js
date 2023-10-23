@@ -30,7 +30,7 @@ export default function EntranceInput(props) {
                 </div>
             </div>
             <div className="text-gray-500 sm:text-sm text-center">
-                Min Entrance Price: { minEntranceEthAmount() } ETH
+                min { minEntranceEthAmount() } ETH
             </div>
         </div>
     );

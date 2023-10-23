@@ -11,9 +11,6 @@ import EntranceInput from "./EntranceInput";
 import EntranceButton from "./EntranceButton";
 
 export default function LotteryEntrance() {
-    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
-    const chainId = parseInt(chainIdHex);
-    const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
     const [minEntrancePrice, setMinEntrancePrice] = useState("0");
     const [playersCount, setPlayersCount] = useState("0");
     const [recentWinner, setRecentWinner] = useState("");
@@ -23,8 +20,13 @@ export default function LotteryEntrance() {
     const [lotteryState, setLotteryState] = useState("");
     const [entranceAmount, setEntranceAmount] = useState("0");
     const [duration, setDuration] = useState("");
-
     const dispatch = useNotification();
+
+    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
+    const chainId = parseInt(chainIdHex);
+    const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const lotteryContract = new ethers.Contract(lotteryAddress, contractAbi, provider);
 
     const { runContractFunction: enterLottery, isLoading, isFetching } = useWeb3Contract({
         abi: contractAbi,
@@ -91,9 +93,6 @@ export default function LotteryEntrance() {
         functionName: "getLotteryState",
         params: {},
     });
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const lotteryContract = new ethers.Contract(lotteryAddress, contractAbi, provider);
 
     async function updateUIValues() {
         const minEntrancePriceFromCall = (await getMinEntrancePrice()).toString();
@@ -169,13 +168,11 @@ export default function LotteryEntrance() {
         });
 
         lotteryContract.on(lotteryClosedFilter, (event) => {
-            console.log('Lottery Closed');
             updateUIValues();
             handleLotteryClosedNotification();
         });
 
         lotteryContract.on(lotteryStartedFilter, (event) => {
-            console.log('Lottery Started');
             updateUIValues();
             handleLotteryStartedNotification();
         });
@@ -199,7 +196,7 @@ export default function LotteryEntrance() {
         dispatch({
             type: "success",
             message: `Winner address: ${winner}`,
-            title: "Winner determined!",
+            title: "Winner selected!",
             position: "topL",
             icon: "bell",
         });
@@ -257,13 +254,21 @@ export default function LotteryEntrance() {
         <div className="p-5">
             { lotteryAddress ? (
                 <>
-                    <div className="h-70 grid grid-cols-7 gap-4 content-center">
-                        <div className="col-start-3 col-span-3">
+                    <div className="grid grid-cols-7 gap-4">
+                        <div className="xl:col-start-3 xl:col-span-3 lg:col-start-2 lg:col-span-5 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
+                            <div className="mb-5">
+                                    <p className="text-justify">
+                                        Each lottery round has a limited duration of { duration } seconds.
+                                        After the round concludes, a winner will be selected to receive the jackpot amount in their wallet address.
+                                        To participate, you must send at least the minimum price of { ethers.utils.formatEther(minEntrancePrice) } ETH.
+                                        The more you send, the greater your chance of winning.
+                                    </p>
+                            </div>
                             <LotteryState lotteryState={ lotteryState } />
                         </div>
                     </div>
-                    <div className="h-70 grid grid-cols-5 gap-4 content-center">
-                        <div className="col-start-3 col-span-1">
+                    <div className="grid grid-cols-7 gap-4">
+                        <div className="xl:col-start-4 xl:col-span-1 lg:col-start-3 lg:col-span-3 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
                             <EntranceInput
                                 entranceAmount={ entranceAmount }
                                 setEntranceAmount={ setEntranceAmount }
@@ -274,7 +279,7 @@ export default function LotteryEntrance() {
                                 buttonDisabled= { isLoading || isFetching }
                             />
                         </div>
-                        <div className="col-start-2 col-span-3">
+                        <div className="xl:col-start-3 xl:col-span-3 lg:col-start-2 lg:col-span-5 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
                             <LotteryDataTable
                                 lotteryPrize={ lotteryPrize }
                                 playersCount={ playersCount }
@@ -284,8 +289,8 @@ export default function LotteryEntrance() {
                             />
                         </div>
                     </div>
-                    <div className="h-70 grid grid-cols-7 gap-4 content-center">
-                        <div className="col-start-3 col-span-3">
+                    <div className="grid grid-cols-9 gap-4">
+                        <div className="xl:col-start-4 xl:col-span-3 lg:col-start-3 lg:col-span-5 sm:col-start-2 sm:col-span-7 xs:col-start-2 xs:col-span-7">
                             <PreviousWinner recentWinner={ recentWinner } />
                         </div>
                     </div>
