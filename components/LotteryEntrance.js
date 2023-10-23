@@ -284,7 +284,7 @@ export default function LotteryEntrance() {
                             </div>
                             <LotteryState lotteryState={ lotteryState } />
                         </div>
-                    </div>q
+                    </div>
                     <EntranceForm
                         entranceAmount={ entranceAmount }
                         setEntranceAmount={ setEntranceAmount }

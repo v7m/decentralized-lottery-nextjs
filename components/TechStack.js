@@ -41,7 +41,7 @@ export default function TechStack() {
                 <div className="col-span-2"></div>
                 { images.map(image => {
                     return (
-                        <div className="col-span-1">
+                        <div key={ image.name } className="col-span-1">
                             <div className="text-center">
                                 <h2>{ image.name }</h2>
                             </div>
