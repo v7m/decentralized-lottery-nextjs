@@ -10,7 +10,7 @@ export default function Header() {
                             Decentralized Ethereum Lottery
                         </span>
                     </a>
-                    <div className="flex items-center lg:order-2">
+                    <div className="flex items-center lg:order-2 dark:text-white">
                         <ConnectButton moralisAuth={false}/>
                     </div>
                 </div>
