@@ -1,13 +1,14 @@
-import { contractAddresses, contractAbi } from "../constants";
-import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useEffect, useState } from "react";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useNotification } from "web3uikit";
 import { ethers } from "ethers";
 
+import { contractAddresses, contractAbi } from "../constants";
 import LotteryDataTable from "./LotteryDataTable";
 import PreviousWinner from "./PreviousWinner";
 import LotteryState from "./LotteryState";
 import EntranceInput from "./EntranceInput";
+import TechStack from "./TechStack";
 import EntranceButton from "./EntranceButton";
 
 export default function LotteryEntrance() {
@@ -289,11 +290,8 @@ export default function LotteryEntrance() {
                             />
                         </div>
                     </div>
-                    <div className="grid grid-cols-9 gap-4">
-                        <div className="xl:col-start-4 xl:col-span-3 lg:col-start-3 lg:col-span-5 sm:col-start-2 sm:col-span-7 xs:col-start-2 xs:col-span-7">
-                            <PreviousWinner recentWinner={ recentWinner } />
-                        </div>
-                    </div>
+                    <PreviousWinner recentWinner={ recentWinner } />
+                    <TechStack/>
                 </>
             ) : (
                 <div>Please connect to a supported chain (Sepolia)</div>
