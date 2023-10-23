@@ -259,8 +259,8 @@ export default function LotteryEntrance() {
                         <div className="xl:col-start-3 xl:col-span-3 lg:col-start-2 lg:col-span-5 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
                             <div className="mb-5">
                                     <p className="text-justify">
-                                        Each lottery round has a limited duration of { duration } seconds.
-                                        After the round concludes, a winner will be selected to receive the jackpot amount in their wallet address.
+                                        <b>The Decentralized Ethereum Lottery</b> takes place in rounds that have a limited duration of { duration } seconds.
+                                        After each round, a winner gets the jackpot in their wallet.
                                         To participate, you must send at least the minimum price of { ethers.utils.formatEther(minEntrancePrice) } ETH.
                                         The more you send, the greater your chance of winning.
                                     </p>
