@@ -7,9 +7,8 @@ import { contractAddresses, contractAbi } from "../constants";
 import LotteryDataTable from "./LotteryDataTable";
 import PreviousWinner from "./PreviousWinner";
 import LotteryState from "./LotteryState";
-import EntranceInput from "./EntranceInput";
 import TechStack from "./TechStack";
-import EntranceButton from "./EntranceButton";
+import EntranceForm from "./EntranceForm";
 
 export default function LotteryEntrance() {
     const [minEntrancePrice, setMinEntrancePrice] = useState("0");
@@ -18,7 +17,7 @@ export default function LotteryEntrance() {
     const [lotteryPrize, setLotteryPrize] = useState("0");
     const [playerAmount, setPlayerAmount] = useState("0");
     const [playersAmountAvg, setPlayersAmountAvg] = useState("0");
-    const [lotteryState, setLotteryState] = useState("");
+    const [lotteryState, setLotteryState] = useState("0");
     const [entranceAmount, setEntranceAmount] = useState("0");
     const [duration, setDuration] = useState("");
     const dispatch = useNotification();
@@ -193,6 +192,16 @@ export default function LotteryEntrance() {
         });
     }
 
+    const handleEntranceErrorNotification = (error) => {
+        dispatch({
+            type: "error",
+            message: `Transaction was reverted: ${error}`,
+            title: "Entrance error",
+            position: "topR",
+            icon: "bell",
+        });
+    }
+
     const handleWinnerPickedNotification = (winner) => {
         dispatch({
             type: "success",
@@ -243,12 +252,20 @@ export default function LotteryEntrance() {
         }
     }
 
+    const handleEntranceError = (error) => {
+        handleEntranceErrorNotification(error);
+    }
+
     const handleSubmit = async () => {
         await enterLottery({
             onComplete: handleTransactionSentNotification,
             onSuccess: handleSuccessEntrance,
-            onError: (error) => console.log(error),
+            onError: handleEntranceError
         })
+    }
+
+    const buttonDisabled = () => {
+        return isLoading || isFetching || lotteryState == "1";
     }
 
     return (
@@ -260,36 +277,28 @@ export default function LotteryEntrance() {
                             <div className="mb-5">
                                     <p className="text-justify">
                                         <b>The Decentralized Ethereum Lottery</b> takes place in rounds that have a limited duration of { duration } seconds.
-                                        After each round, a winner gets the jackpot in their wallet.
+                                        After each round, it takes some time to determine the winner who receives the jackpot in their wallet.
                                         To participate, you must send at least the minimum price of { ethers.utils.formatEther(minEntrancePrice) } ETH.
                                         The more you send, the greater your chance of winning.
                                     </p>
                             </div>
                             <LotteryState lotteryState={ lotteryState } />
                         </div>
-                    </div>
-                    <div className="grid grid-cols-7 gap-4">
-                        <div className="xl:col-start-4 xl:col-span-1 lg:col-start-3 lg:col-span-3 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
-                            <EntranceInput
-                                entranceAmount={ entranceAmount }
-                                setEntranceAmount={ setEntranceAmount }
-                                minEntrancePrice={ minEntrancePrice }
-                            />
-                            <EntranceButton
-                                handleSubmit={ handleSubmit }
-                                buttonDisabled= { isLoading || isFetching }
-                            />
-                        </div>
-                        <div className="xl:col-start-3 xl:col-span-3 lg:col-start-2 lg:col-span-5 sm:col-start-2 sm:col-span-5 xs:col-start-2 xs:col-span-5">
-                            <LotteryDataTable
-                                lotteryPrize={ lotteryPrize }
-                                playersCount={ playersCount }
-                                playersAmountAvg={ playersAmountAvg }
-                                playerAmount={ playerAmount }
-                                duration={ duration }
-                            />
-                        </div>
-                    </div>
+                    </div>q
+                    <EntranceForm
+                        entranceAmount={ entranceAmount }
+                        setEntranceAmount={ setEntranceAmount }
+                        minEntrancePrice={ minEntrancePrice }
+                        handleSubmit={ handleSubmit }
+                        buttonDisabled= { buttonDisabled() }
+                    />
+                    <LotteryDataTable
+                        lotteryPrize={ lotteryPrize }
+                        playersCount={ playersCount }
+                        playersAmountAvg={ playersAmountAvg }
+                        playerAmount={ playerAmount }
+                        duration={ duration }
+                    />
                     <PreviousWinner recentWinner={ recentWinner } />
                     <TechStack/>
                 </>

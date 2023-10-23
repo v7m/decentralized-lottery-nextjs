@@ -48,8 +48,8 @@ export default function TechStack() {
                             <div className="flex justify-center items-center">
                                 <Image
                                     src={ image.src }
-                                    width={ 100 }
-                                    height={ 100 }
+                                    width={ 90 }
+                                    height={ 90 }
                                     loader={ () => value }
                                     unoptimized={ true }
                                 />
