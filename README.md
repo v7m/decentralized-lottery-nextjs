@@ -17,7 +17,6 @@ Deployed App IPFS: `ipfs://QmczXNikyVX4zVzPmWo6zyf5rj4a5bBPQp3qtvNj2Vo58n`
 - Ethers.js
 - Next.js
 - Moralis
-- Web3UIKit
 - IPFS
 
 # Getting Started
