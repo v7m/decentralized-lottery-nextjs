@@ -1,5 +1,7 @@
 # Decentralized Ethereum Lottery Next.js
 
+*The purpose of this project is to acquire hands-on experience in web3 application development.*
+
 This is a frontend part of Decentralized Ethereum Lottery project. You can find the other part in the [Hardhat Repo](https://github.com/v7m/decentralized-lottery-hardhat).
 
 Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
