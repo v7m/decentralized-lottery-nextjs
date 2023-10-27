@@ -1,13 +1,14 @@
+import { useMoralis } from "react-moralis";
+
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Header from "../components/Header";
 import LotteryEntrance from "../components/LotteryEntrance";
-import { useMoralis } from "react-moralis";
-
-const supportedChains = ["31337", "11155111"]; // localhost, sepolia
+import Footer from "../components/Footer";
 
 export default function Home() {
     const { isWeb3Enabled, chainId } = useMoralis();
+    const supportedChains = ["31337", "11155111"]; // localhost, Sepolia
 
     return (
         <div className={styles.container}>
@@ -44,6 +45,7 @@ export default function Home() {
                     </div>
                 </div>
             )}
+            <Footer />
         </div>
     );
 }

@@ -7,7 +7,6 @@ import { contractAddresses, contractAbi } from "../constants";
 import LotteryDataTable from "./LotteryDataTable";
 import PreviousWinner from "./PreviousWinner";
 import LotteryState from "./LotteryState";
-import TechStack from "./TechStack";
 import EntranceForm from "./EntranceForm";
 
 export default function LotteryEntrance() {
@@ -300,7 +299,6 @@ export default function LotteryEntrance() {
                         duration={ duration }
                     />
                     <PreviousWinner recentWinner={ recentWinner } />
-                    <TechStack/>
                 </>
             ) : (
                 <div>Please connect to a supported chain (Sepolia)</div>
