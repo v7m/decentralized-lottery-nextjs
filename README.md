@@ -1,8 +1,12 @@
 # Decentralized Ethereum Lottery Next.js
 
-*The purpose of this project is to acquire hands-on experience in web3 application development.*
+> *This is an educational project with the purpose of acquiring hands-on experience in web3 application development using smart contracts written in Solidity.*
 
-This is a frontend part of Decentralized Ethereum Lottery project. You can find the other part in the [Hardhat Repo](https://github.com/v7m/decentralized-lottery-hardhat).
+The Decentralized Lottery project consists of 2 parts:
+
+[Hardhat App](https://github.com/v7m/decentralized-lottery-hardhat): This component is responsible for managing smart contracts and includes deployment scripts, using the popular development environment for Ethereum smart contracts.
+
+[Next.js App](https://github.com/v7m/decentralized-lottery-nextjs): This part serves as the frontend of the application and interacts with on-chain logic within the Ethereum ecosystem.
 
 <img src="img/readme-app.png" alt="image" width="500" height="auto">
 
@@ -13,7 +17,7 @@ This is a frontend part of Decentralized Ethereum Lottery project. You can find 
 
 # Built with:
 - Solidity
-- Chainlink
+- Chainlink (VRF, Automation)
 - Hardhat
 - Ethers.js
 - Next.js
