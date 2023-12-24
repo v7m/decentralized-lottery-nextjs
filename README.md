@@ -10,12 +10,16 @@ The Decentralized Lottery project consists of 2 parts:
 
 <img src="img/readme-app.png" alt="image" width="500" height="auto">
 
-# Deployed App Links
+# Description
+
+The **Decentralized Lottery** is a blockchain-based lottery system. It integrates Chainlink's Verifiable Random Function (VRF) to ensure fair and random winner selection, Chainlink's Automation for triggers lottery ending, and includes features for player management, automated lottery upkeep, and secure prize distribution. The contract governs entry rules, maintains the lottery's operational state, and handles the drawing and announcement of winners in an autonomous and transparent manner.
+
+## Deployed App Links
 
 - https://decentralized-eth-lottery.on.fleek.co/
-- `ipfs://QmczXNikyVX4zVzPmWo6zyf5rj4a5bBPQp3qtvNj2Vo58n`
+- ipfs://QmczXNikyVX4zVzPmWo6zyf5rj4a5bBPQp3qtvNj2Vo58n
 
-# Built with:
+## Built with:
 - Solidity
 - Chainlink (VRF, Automation)
 - Hardhat
@@ -69,7 +73,7 @@ yarn dev
 
 Open [localhost](http://localhost:3000) and try the lottery.
 
-# Deploy to IPFS
+## Deploy to IPFS
 
 1. Build your static code.
 
@@ -98,12 +102,12 @@ yarn next export
 6. Open `ipfs://YOUR_CID_HERE` to see IPFS app deployed
 
 
-# Deploy to IPFS using Fleek
+## Deploy to IPFS using Fleek
 
 [Fleek](https://fleek.co/) offers automatic deployment when connected to your GitHub repository.
 
 
-# Linting
+## Linting
 
 To check linting / code formatting:
 ```
